@@ -1,0 +1,6 @@
+@InmobiliariaMillion_HostAddress = http://localhost:5022
+
+GET {{InmobiliariaMillion_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
