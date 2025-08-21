@@ -1,4 +1,5 @@
 using InmobiliariaMillion.Application.DTOs;
+using InmobiliariaMillion.Dominio;
 using InmobiliariaMillion.Dominio.Interfaces;
 
 namespace InmobiliariaMillion.Application.Servicios
@@ -111,6 +112,55 @@ namespace InmobiliariaMillion.Application.Servicios
         public async Task<List<PropiedadDto>> ObtenerTodasLasPropiedadesAsync()
         {
             return await ObtenerPropiedadesFiltradosAsync(new FiltrosPropiedadDto());
+        }
+
+        public async Task<PropiedadDto> CrearPropiedadAsync(PropiedadDto propiedadDto)
+        {
+            if (propiedadDto == null)
+                throw new ArgumentNullException(nameof(propiedadDto));
+
+            var propiedad = new Propiedad
+            {
+                IdPropiedad = propiedadDto.IdPropiedad,
+                Nombre = propiedadDto.Nombre,
+                Direccion = propiedadDto.Direccion,
+                Precio = propiedadDto.Precio,
+                CodigoInterno = propiedadDto.CodigoInterno,
+                IdPropietario = propiedadDto.IdPropietario,
+                ImagenesPropiedad = propiedadDto.ImagenesPropiedad
+                    .Select(i => new ImagenPropiedad
+                    {
+                        IdImagenPropiedad = i.IdImagenPropiedad,
+                        IdPropiedad = i.IdPropiedad,
+                        Archivo = i.Archivo,
+                        Habilitada = i.Habilitada
+                    }).ToList(),
+                TrazabilidadesPropiedad = propiedadDto.TrazabilidadesPropiedad.Select(t => new TrazabilidadPropiedad
+                {
+                    IdTrazabilidadPropiedad = t.IdTrazabilidadPropiedad,
+                    IdPropiedad = t.IdPropiedad,
+                    FechaVenta = t.FechaVenta,
+                    Impuesto = t.Impuesto,
+                    Nombre = t.Nombre,
+                    Valor = t.Valor
+                }).ToList()
+            };
+
+            var propiedadCreada = await _propiedadRepository.CrearAsync(propiedad);
+
+            var resultado = new PropiedadDto
+            {
+                IdPropiedad = propiedadCreada.IdPropiedad,
+                Nombre = propiedadCreada.Nombre,
+                Direccion = propiedadCreada.Direccion,
+                Precio = propiedadCreada.Precio,
+                CodigoInterno = propiedadCreada.CodigoInterno,
+                IdPropietario = propiedadCreada.IdPropietario,
+                ImagenesPropiedad = new List<ImagenPropiedadDto>(),
+                TrazabilidadesPropiedad = new List<TrazabilidadPropiedadDto>()
+            };
+
+            return resultado;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace InmobiliariaMillion.Infrastructura
     {
         public static IServiceCollection AddInfrastructura(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("MongoDB");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
             var databaseName = configuration["MongoDB:DatabaseName"];
             
             services.AddSingleton<IMongoDatabase>(provider =>

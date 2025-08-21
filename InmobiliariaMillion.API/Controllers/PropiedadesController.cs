@@ -21,27 +21,6 @@ namespace InmobiliariaMillion.Controllers
         }
 
         /// <summary>
-        /// Obtiene todas las propiedades
-        /// </summary>
-        /// <returns>Lista de propiedades</returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(List<PropiedadDto>), 200)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<List<PropiedadDto>>> ObtenerTodasLasPropiedades()
-        {
-            try
-            {
-                var propiedades = await _propiedadApiService.ObtenerTodasLasPropiedadesAsync();
-                return Ok(propiedades);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al obtener todas las propiedades");
-                return StatusCode(500, "Error interno del servidor");
-            }
-        }
-
-        /// <summary>
         /// Obtiene propiedades con filtros
         /// </summary>
         /// <param name="name">Filtro por nombre</param>
@@ -121,74 +100,32 @@ namespace InmobiliariaMillion.Controllers
         }
 
         /// <summary>
-        /// Filtrar propiedades por nombre
+        /// Crea una nueva propiedad
         /// </summary>
-        /// <param name="nombre">Nombre a buscar</param>
-        /// <returns>Lista de propiedades que coinciden con el nombre</returns>
-        [HttpGet("buscar-por-nombre/{nombre}")]
-        [ProducesResponseType(typeof(List<PropiedadDto>), 200)]
+        /// <param name="propiedadDto">Datos de la propiedad a crear</param>
+        /// <returns>Propiedad creada</returns>
+        [HttpPost]
+        [ProducesResponseType(typeof(PropiedadDto), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<List<PropiedadDto>>> BuscarPorNombre(string nombre)
+        public async Task<ActionResult<PropiedadDto>> CrearPropiedad([FromBody] PropiedadDto propiedadDto)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(nombre))
+                if (propiedadDto == null)
                 {
-                    return BadRequest("El nombre de búsqueda es requerido");
+                    return BadRequest("Los datos de la propiedad son requeridos.");
                 }
 
-                var filtros = new FiltrosPropiedadDto { Name = nombre };
-                var propiedades = await _propiedadApiService.ObtenerPropiedadesFiltradosAsync(filtros);
-                
-                return Ok(propiedades);
+                // Puedes agregar validaciones adicionales aquí si lo necesitas
+
+                var propiedadCreada = await _propiedadApiService.CrearPropiedadAsync(propiedadDto);
+
+                return CreatedAtAction(nameof(ObtenerPropiedadPorId), new { id = propiedadCreada.IdPropiedad }, propiedadCreada);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al buscar propiedades por nombre: {Nombre}", nombre);
-                return StatusCode(500, "Error interno del servidor");
-            }
-        }
-
-        /// <summary>
-        /// Filtrar propiedades por rango de precio
-        /// </summary>
-        /// <param name="minimo">Precio mínimo</param>
-        /// <param name="maximo">Precio máximo</param>
-        /// <returns>Lista de propiedades en el rango de precio</returns>
-        [HttpGet("rango-precio")]
-        [ProducesResponseType(typeof(List<PropiedadDto>), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<List<PropiedadDto>>> FiltrarPorRangoPrecio(
-            [FromQuery] decimal minimo,
-            [FromQuery] decimal maximo)
-        {
-            try
-            {
-                if (minimo < 0)
-                {
-                    return BadRequest("El precio mínimo no puede ser negativo");
-                }
-
-                if (minimo > maximo)
-                {
-                    return BadRequest("El precio mínimo no puede ser mayor al precio máximo");
-                }
-
-                var filtros = new FiltrosPropiedadDto 
-                { 
-                    MinPrice = minimo, 
-                    MaxPrice = maximo 
-                };
-                
-                var propiedades = await _propiedadApiService.ObtenerPropiedadesFiltradosAsync(filtros);
-                
-                return Ok(propiedades);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al filtrar propiedades por rango de precio: {Minimo}-{Maximo}", minimo, maximo);
+                _logger.LogError(ex, "Error al crear la propiedad");
                 return StatusCode(500, "Error interno del servidor");
             }
         }
