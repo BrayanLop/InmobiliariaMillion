@@ -1,10 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using InmobiliariaMillion.Infrastructura.Configuration;
-using InmobiliariaMillion.Dominio.Interfaces;
 using InmobiliariaMillion.Infrastructura.Repositorio;
 using Microsoft.Extensions.Configuration;
 using InmobiliariaMillion.Application.Servicios;
+using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
+using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
 
 namespace InmobiliariaMillion.Infrastructura
 {
@@ -29,7 +30,7 @@ namespace InmobiliariaMillion.Infrastructura
 
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IPropiedadApiService, PropiedadApiService>();
+            services.AddScoped<IPropiedadServicio, PropiedadServicio>();
                         
             return services;
         }
