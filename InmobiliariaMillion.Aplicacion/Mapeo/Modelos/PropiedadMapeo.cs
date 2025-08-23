@@ -26,6 +26,7 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
             if (dto == null) return null;
             return new Propiedad
             {
+                _id = dto._id,
                 IdPropiedad = dto.IdPropiedad,
                 Nombre = dto.Nombre,
                 Direccion = dto.Direccion,
@@ -34,6 +35,18 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
                 Anio = dto.Anio,
                 IdPropietario = dto.IdPropietario
             };
+        }
+
+        public static List<PropiedadOutputDto> ADtoLista(List<Propiedad> entidades)
+        {
+            if (entidades == null) return null;
+            return entidades.Select(ADto).ToList();
+        }
+
+        public static List<Propiedad> ADominioLista(List<PropiedadInputDto> dtos)
+        {
+            if (dtos == null) return null;
+            return dtos.Select(ADominio).ToList();
         }
     }
 }

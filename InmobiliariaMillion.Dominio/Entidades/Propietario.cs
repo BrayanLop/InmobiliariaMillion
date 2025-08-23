@@ -1,7 +1,10 @@
+using MongoDB.Bson;
+
 namespace InmobiliariaMillion.Dominio.Entidades
 {
     public class Propietario
     {
+        public ObjectId _id { get; set; }
         public string IdPropietario { get; set; }
         public string Nombre { get; set; }
         public string Direccion { get; set; }

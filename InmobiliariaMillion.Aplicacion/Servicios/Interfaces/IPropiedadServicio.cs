@@ -9,5 +9,7 @@ namespace InmobiliariaMillion.Aplicacion.Servicios.Interfaces
         Task<List<PropiedadOutputDto>> ObtenerPropiedadesAsync(FiltrosPropiedadDto filtros);
         Task<PropiedadOutputDto> ObtenerPropiedadPorIdAsync(string id);
         Task<PropiedadOutputDto> CrearPropiedadAsync(PropiedadInputDto propiedadDto);
+        Task<PropiedadOutputDto> ActualizarPropiedadAsync(PropiedadInputDto propietarioDto);
+        Task<bool> EliminarPropiedadAsync(string id);
     }
 }

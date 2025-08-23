@@ -12,14 +12,10 @@ namespace InmobiliariaMillion.Controllers
     public class PropiedadController : ControllerBase
     {
         private readonly IPropiedadServicio _propiedadServicio;
-        private readonly ILogger<PropiedadController> _logger;
 
-        public PropiedadController(
-            IPropiedadServicio propiedadApiService,
-            ILogger<PropiedadController> logger)
+        public PropiedadController(IPropiedadServicio propiedadApiService)
         {
             _propiedadServicio = propiedadApiService;
-            _logger = logger;
         }
 
         /// <summary>
@@ -34,26 +30,14 @@ namespace InmobiliariaMillion.Controllers
         [ProducesResponseType(typeof(List<PropiedadOutputDto>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<List<PropiedadOutputDto>>> Obtener(
-            [FromQuery] string? nombre = null,
-            [FromQuery] string? direccion = null,
-            [FromQuery] decimal? precioMinimo = null,
-            [FromQuery] decimal? PrecioMaximo = null)
+        public async Task<ActionResult<List<PropiedadOutputDto>>> Obtener([FromQuery] FiltrosPropiedadDto filtros)
         {
             try
             {
-                if (precioMinimo.HasValue && PrecioMaximo.HasValue && precioMinimo > PrecioMaximo)
+                if (filtros.PrecioMinimo.HasValue && filtros.PrecioMaximo.HasValue && filtros.PrecioMinimo > filtros.PrecioMaximo)
                 {
                     return BadRequest("El precio mínimo no puede ser mayor al precio máximo");
                 }
-
-                var filtros = new FiltrosPropiedadDto
-                {
-                    Nombre = nombre,
-                    Direccion = direccion,
-                    PrecioMinimo = precioMinimo,
-                    PrecioMaximo = PrecioMaximo
-                };
 
                 var propiedades = await _propiedadServicio.ObtenerPropiedadesAsync(filtros);
                 return Ok(propiedades);
@@ -84,11 +68,10 @@ namespace InmobiliariaMillion.Controllers
 
                 var propiedadCreada = await _propiedadServicio.CrearPropiedadAsync(propiedadDto);
 
-                return CreatedAtAction(nameof(ObtenerPropiedadPorId), new { id = propiedadCreada.IdPropiedad }, propiedadCreada);
+                return CreatedAtAction(nameof(ObtenerPorId), new { id = propiedadCreada.IdPropiedad }, propiedadCreada);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al crear la propiedad");
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -102,7 +85,7 @@ namespace InmobiliariaMillion.Controllers
         [ProducesResponseType(typeof(PropiedadOutputDto), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<PropiedadOutputDto>> ObtenerPropiedadPorId(string id)
+        public async Task<ActionResult<PropiedadOutputDto>> ObtenerPorId(string id)
         {
             try
             {
@@ -122,7 +105,75 @@ namespace InmobiliariaMillion.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener propiedad por ID: {Id}", id);
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+        /// <summary>
+        /// Actualiza una propiedad existente
+        /// </summary>
+        /// <param name="id">ID de la propiedad a actualizar</param>
+        /// <param name="propiedadDto">Datos actualizados de la propiedad</param>
+        /// <returns>Propiedad actualizada</returns>
+        [HttpPut("Actualizar/{id}")]
+        [ProducesResponseType(typeof(PropiedadOutputDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<PropiedadOutputDto>> Actualizar(string id, [FromBody] PropiedadInputDto propiedadDto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id) || propiedadDto == null)
+                {
+                    return BadRequest("El ID y los datos de la propiedad son requeridos.");
+                }
+
+                propiedadDto.IdPropiedad = id;
+                var propiedadActualizada = await _propiedadServicio.ActualizarPropiedadAsync(propiedadDto);
+
+                if (propiedadActualizada == null)
+                {
+                    return NotFound($"No se encontró la propiedad con ID: {id}");
+                }
+
+                return Ok(propiedadActualizada);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
+        /// <summary>
+        /// Elimina una propiedad por ID
+        /// </summary>
+        /// <param name="id">ID de la propiedad a eliminar</param>
+        /// <returns>Resultado de la eliminación</returns>
+        [HttpDelete("Eliminar/{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> Eliminar(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    return BadRequest("El ID de la propiedad es requerido.");
+                }
+
+                var eliminado = await _propiedadServicio.EliminarPropiedadAsync(id);
+
+                if (!eliminado)
+                {
+                    return NotFound($"No se encontró la propiedad con ID: {id}");
+                }
+
+                return NoContent();
+            }
+            catch (Exception)
+            {
                 return StatusCode(500, "Error interno del servidor");
             }
         }

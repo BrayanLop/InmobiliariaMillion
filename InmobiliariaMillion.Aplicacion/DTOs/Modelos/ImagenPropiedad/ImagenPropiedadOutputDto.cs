@@ -1,6 +1,6 @@
 namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos.ImagenPropiedad
 {
-    public class ImagenPropiedadDto
+    public class ImagenPropiedadOutputDto
     {
         public string IdImagenPropiedad { get; set; }
         public string IdPropiedad { get; set; }

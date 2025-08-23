@@ -28,20 +28,7 @@ namespace InmobiliariaMillion.Application.Servicios
             var propiedades = await _propiedadRepository.ObtenerAsync(
                 filtros.Nombre, filtros.Direccion, filtros.PrecioMinimo, filtros.PrecioMaximo);
 
-            var resultado = new List<PropiedadOutputDto>();
-
-            foreach (var propiedad in propiedades)
-            {
-                var propietario = await _propietarioRepository.ObtenerPorIdAsync(propiedad.IdPropietario);
-                var imagenes = await _imagenRepository.ObtenerPorPropiedadAsync(propiedad.IdPropiedad);
-
-                var propiedadDto = PropiedadMapeo.ADto(propiedad);
-                propiedadDto.Propietario = PropietarioMapeo.ADto(propietario);
-
-                resultado.Add(propiedadDto);
-            }
-
-            return resultado;
+            return PropiedadMapeo.ADtoLista(propiedades);
         }
 
         public async Task<PropiedadOutputDto> ObtenerPropiedadPorIdAsync(string id)
@@ -50,12 +37,7 @@ namespace InmobiliariaMillion.Application.Servicios
             if (propiedad == null)
                 return null;
 
-            var propietario = await _propietarioRepository.ObtenerPorIdAsync(propiedad.IdPropietario);
-
-            var propiedadDto = PropiedadMapeo.ADto(propiedad);
-            propiedadDto.Propietario = PropietarioMapeo.ADto(propietario);
-
-            return propiedadDto;
+            return PropiedadMapeo.ADto(propiedad);            
         }
 
         public async Task<PropiedadOutputDto> CrearPropiedadAsync(PropiedadInputDto propiedadDto)
@@ -63,11 +45,33 @@ namespace InmobiliariaMillion.Application.Servicios
             if (propiedadDto == null)
                 throw new ArgumentNullException(nameof(propiedadDto));
 
-            var propiedad = PropiedadMapeo.ADominio(propiedadDto);
-
-            var propiedadCreada = await _propiedadRepository.CrearAsync(propiedad);
+            var propiedadCreada = await _propiedadRepository.CrearAsync(PropiedadMapeo.ADominio(propiedadDto));
 
             return PropiedadMapeo.ADto(propiedadCreada);
+        }
+
+        public async Task<PropiedadOutputDto> ActualizarPropiedadAsync(PropiedadInputDto propietarioDto)
+        {
+            if (propietarioDto == null)
+                throw new ArgumentNullException(nameof(propietarioDto));
+
+            var propiedad = await _propiedadRepository.ObtenerPorIdAsync(propietarioDto.IdPropiedad);
+            if (propiedad == null) return null;
+
+            propietarioDto._id = propiedad._id;
+
+            var propiedadActualizada = await _propiedadRepository.ActualizarAsync(PropiedadMapeo.ADominio(propietarioDto));
+
+            return PropiedadMapeo.ADto(propiedadActualizada);           
+        }
+
+        public async Task<bool> EliminarPropiedadAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentNullException(nameof(id));
+
+            var resultado = await _propietarioRepository.EliminarAsync(id);
+            return resultado;
         }
     }
 }

@@ -1,4 +1,5 @@
 using InmobiliariaMillion.Aplicacion.DTOs.Modelos.Propietario;
+using MongoDB.Bson;
 
 namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos
 {
@@ -11,6 +12,5 @@ namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos
         public string CodigoInterno { get; set; }
         public int Anio { get; set; }
         public string IdPropietario { get; set; }
-        public PropietarioOutputDto Propietario { get; set; }
     }
 }

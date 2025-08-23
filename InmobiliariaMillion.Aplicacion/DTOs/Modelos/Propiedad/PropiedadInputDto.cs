@@ -1,7 +1,10 @@
+using MongoDB.Bson;
+
 namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos.Propiedad
 {
     public class PropiedadInputDto
     {
+        public ObjectId _id { get; set; }
         public string IdPropiedad { get; set; }
         public string Nombre { get; set; }
         public string Direccion { get; set; }

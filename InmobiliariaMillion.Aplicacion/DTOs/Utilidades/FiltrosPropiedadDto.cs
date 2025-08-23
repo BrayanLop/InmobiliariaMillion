@@ -6,5 +6,7 @@ namespace InmobiliariaMillion.Aplicacion.DTOs.Utilidades
         public string? Direccion { get; set; }
         public decimal? PrecioMinimo { get; set; }
         public decimal? PrecioMaximo { get; set; }
+        public bool? InlcuirDetalle { get; set; }
+
     }
 }

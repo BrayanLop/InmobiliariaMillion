@@ -1,26 +1,28 @@
-using MongoDB.Driver;
-using MongoDB.Bson;
-using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
 using InmobiliariaMillion.Dominio.Entidades;
+using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace InmobiliariaMillion.Infrastructura.Repositorio
 {
     public class PropietarioRepository : IPropietarioRepository
     {
         private readonly IMongoCollection<Propietario> _coleccion;
-        private readonly IMongoCollection<Propiedad> _coleccionPropiedades;
 
         public PropietarioRepository(IMongoDatabase baseDatos)
         {
             _coleccion = baseDatos.GetCollection<Propietario>("Propietario");
-            _coleccionPropiedades = baseDatos.GetCollection<Propiedad>("Propiedad");
         }
 
-        public async Task<Propietario> CrearAsync(Propietario propietario)
+        public async Task<List<Propietario>> ObtenerAsync(string nombre)
         {
-            propietario.IdPropietario = ObjectId.GenerateNewId().ToString();
-            await _coleccion.InsertOneAsync(propietario);
-            return propietario;
+            var builder = Builders<Propietario>.Filter;
+            var filtro = builder.Empty;
+
+            if (!string.IsNullOrEmpty(nombre))
+                filtro &= builder.Regex(x => x.Nombre, new BsonRegularExpression(nombre, "i"));
+
+            return await _coleccion.Find(filtro).ToListAsync();
         }
 
         public async Task<Propietario> ObtenerPorIdAsync(string id)
@@ -28,9 +30,11 @@ namespace InmobiliariaMillion.Infrastructura.Repositorio
             return await _coleccion.Find(x => x.IdPropietario == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Propietario>> ObtenerTodosAsync()
+        public async Task<Propietario> CrearAsync(Propietario propietario)
         {
-            return await _coleccion.Find(_ => true).ToListAsync();
+            propietario.IdPropietario = ObjectId.GenerateNewId().ToString();
+            await _coleccion.InsertOneAsync(propietario);
+            return propietario;
         }
 
         public async Task<Propietario> ActualizarAsync(Propietario propietario)
@@ -49,28 +53,6 @@ namespace InmobiliariaMillion.Infrastructura.Repositorio
         {
             var cantidad = await _coleccion.CountDocumentsAsync(x => x.IdPropietario == id);
             return cantidad > 0;
-        }
-
-        public async Task<List<Propietario>> BuscarPorNombreAsync(string nombre)
-        {
-            return await _coleccion.Find(x => x.Nombre.Contains(nombre)).ToListAsync();
-        }
-
-        public async Task<List<Propietario>> ObtenerPropietariosConPropiedadesAsync()
-        {
-            var propietariosConPropiedades = await _coleccionPropiedades
-                .Distinct<string>("idPropietario", Builders<Propiedad>.Filter.Empty)
-                .ToListAsync();
-
-            return await _coleccion
-                .Find(x => propietariosConPropiedades.Contains(x.IdPropietario))
-                .ToListAsync();
-        }
-
-        public async Task<int> ObtenerCantidadPropiedadesPorPropietarioAsync(string idPropietario)
-        {
-            var cantidad = await _coleccionPropiedades.CountDocumentsAsync(x => x.IdPropietario == idPropietario);
-            return (int)cantidad;
         }
     }
 }

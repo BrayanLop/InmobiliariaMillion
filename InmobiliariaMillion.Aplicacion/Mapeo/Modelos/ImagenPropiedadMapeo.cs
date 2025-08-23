@@ -5,10 +5,10 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
 {
     public static class ImagenPropiedadMapeo
     {
-        public static ImagenPropiedadDto ADto(ImagenPropiedad entidad)
+        public static ImagenPropiedadInputDto ADto(ImagenPropiedad entidad)
         {
             if (entidad == null) return null;
-            return new ImagenPropiedadDto
+            return new ImagenPropiedadInputDto
             {
                 IdImagenPropiedad = entidad.IdImagenPropiedad,
                 IdPropiedad = entidad.IdPropiedad,
@@ -17,7 +17,7 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
             };
         }
 
-        public static ImagenPropiedad ADominio(ImagenPropiedadDto dto)
+        public static ImagenPropiedad ADominio(ImagenPropiedadInputDto dto)
         {
             if (dto == null) return null;
             return new ImagenPropiedad
