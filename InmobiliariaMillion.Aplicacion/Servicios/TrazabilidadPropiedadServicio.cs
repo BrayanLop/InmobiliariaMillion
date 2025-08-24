@@ -35,8 +35,16 @@ namespace InmobiliariaMillion.Application.Servicios
 
         public async Task<TrazabilidadPropiedadOutputDto> ActualizarTrazabilidadPropiedadAsync(TrazabilidadPropiedadInputDto trazabilidadDto)
         {
-            var trazabilidad = await _trazabilidadRepository.ActualizarAsync(TrazabilidadPropiedadMapeo.ADominio(trazabilidadDto));
-            return TrazabilidadPropiedadMapeo.ADto(trazabilidad);
+            if (trazabilidadDto == null)
+                throw new ArgumentNullException(nameof(trazabilidadDto));
+
+            var trazabilidad = await _trazabilidadRepository.ObtenerPorIdAsync(trazabilidadDto.IdTrazabilidadPropiedad);
+            if (trazabilidad == null) return null;
+
+            trazabilidadDto._id = trazabilidad._id;
+
+            var trazabilidadActualizada = await _trazabilidadRepository.ActualizarAsync(TrazabilidadPropiedadMapeo.ADominio(trazabilidadDto));
+            return TrazabilidadPropiedadMapeo.ADto(trazabilidadActualizada);
         }
 
         public async Task<bool> EliminarTrazabilidadPropiedadAsync(string idTrazabilidadPropiedad)

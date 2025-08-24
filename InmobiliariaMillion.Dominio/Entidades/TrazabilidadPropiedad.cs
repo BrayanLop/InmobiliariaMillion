@@ -1,7 +1,11 @@
+using MongoDB.Bson;
+using System.Text.Json.Serialization;
+
 namespace InmobiliariaMillion.Dominio.Entidades
 {
     public class TrazabilidadPropiedad
     {
+        public ObjectId _id { get; set; }
         public string IdTrazabilidadPropiedad { get; set; }
         public DateTime FechaVenta { get; set; }
         public string Nombre { get; set; }

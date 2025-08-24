@@ -24,6 +24,7 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
             if (dto == null) return null;
             return new TrazabilidadPropiedad
             {
+                _id = dto._id,
                 IdTrazabilidadPropiedad = dto.IdTrazabilidadPropiedad,
                 FechaVenta = dto.FechaVenta,
                 Nombre = dto.Nombre,

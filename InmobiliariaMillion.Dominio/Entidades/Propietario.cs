@@ -9,7 +9,7 @@ namespace InmobiliariaMillion.Dominio.Entidades
         public string Nombre { get; set; }
         public string Direccion { get; set; }
         public string Foto { get; set; }
-        public string FechaNacimiento { get; set; }
+        public DateTime FechaNacimiento { get; set; }
 
         public void ActualizarInformacion(string nuevoNombre, string nuevaDireccion)
         {

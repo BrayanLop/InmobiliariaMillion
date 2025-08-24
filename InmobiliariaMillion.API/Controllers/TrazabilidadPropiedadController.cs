@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
+using InmobiliariaMillion.Aplicacion.DTOs.Modelos;
 using InmobiliariaMillion.Aplicacion.DTOs.Modelos.TrazabilidadPropiedad;
+using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InmobiliariaMillion.API.Controllers
 {
@@ -16,7 +17,10 @@ namespace InmobiliariaMillion.API.Controllers
             _trazabilidadPropiedadServicio = trazabilidadPropiedadServicio;
         }
 
-        [HttpPost]
+        [HttpPost("Crear")]
+        [ProducesResponseType(typeof(TrazabilidadPropiedadOutputDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> Crear([FromBody] TrazabilidadPropiedadInputDto dto)
         {
             var result = await _trazabilidadPropiedadServicio.CrearTrazabilidadPropiedadAsync(dto);
@@ -30,36 +34,53 @@ namespace InmobiliariaMillion.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{idTrazabilidadPropiedad}")]
-        public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> ObtenerPorId(string idTrazabilidadPropiedad)
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(TrazabilidadPropiedadOutputDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> ObtenerPorId(string id)
         {
-            var result = await _trazabilidadPropiedadServicio.ObtenerTrazabilidadPropiedadPorIdAsync(idTrazabilidadPropiedad);
+            var result = await _trazabilidadPropiedadServicio.ObtenerTrazabilidadPropiedadPorIdAsync(id);
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
 
-        [HttpPut("{idTrazabilidadPropiedad}")]
-        public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> Actualizar(string idTrazabilidadPropiedad, [FromBody] TrazabilidadPropiedadInputDto dto)
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(TrazabilidadPropiedadOutputDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> Actualizar(string id, [FromBody] TrazabilidadPropiedadInputDto trazabilidadPropiedadDto)
         {
-            if (idTrazabilidadPropiedad != dto.IdTrazabilidadPropiedad)
-                return BadRequest("El id de la ruta no coincide con el del cuerpo.");
-            var result = await _trazabilidadPropiedadServicio.ActualizarTrazabilidadPropiedadAsync(dto);
-            if (result == null)
-                return NotFound();
+            if (string.IsNullOrWhiteSpace(id) || trazabilidadPropiedadDto == null)
+            {
+                return BadRequest("Los datos del registro son requeridos.");
+            }
+
+            trazabilidadPropiedadDto.IdTrazabilidadPropiedad = id;
+            var result = await _trazabilidadPropiedadServicio.ActualizarTrazabilidadPropiedadAsync(trazabilidadPropiedadDto);
+            if (result == null) return NotFound();
+
             return Ok(result);
         }
 
-        [HttpDelete("{idTrazabilidadPropiedad}")]
-        public async Task<ActionResult> Eliminar(string idTrazabilidadPropiedad)
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> Eliminar(string id)
         {
-            var eliminado = await _trazabilidadPropiedadServicio.EliminarTrazabilidadPropiedadAsync(idTrazabilidadPropiedad);
-            if (!eliminado)
-                return NotFound();
+            var eliminado = await _trazabilidadPropiedadServicio.EliminarTrazabilidadPropiedadAsync(id);
+            if (!eliminado) return NotFound();
+
             return NoContent();
         }
 
         [HttpGet("ventas-recientes")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<List<TrazabilidadPropiedadOutputDto>>> ObtenerVentasRecientes([FromQuery] DateTime desde)
         {
             var result = await _trazabilidadPropiedadServicio.ObtenerVentasRecientesAsync(desde);
