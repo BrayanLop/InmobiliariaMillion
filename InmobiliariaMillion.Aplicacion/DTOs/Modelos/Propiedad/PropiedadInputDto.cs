@@ -1,11 +1,14 @@
 using MongoDB.Bson;
+using System.Text.Json.Serialization;
 
 namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos.Propiedad
 {
     public class PropiedadInputDto
     {
+        [JsonIgnore]
         public ObjectId _id { get; set; }
-        public string IdPropiedad { get; set; }
+        [JsonIgnore]
+        public string? IdPropiedad { get; set; }
         public string Nombre { get; set; }
         public string Direccion { get; set; }
         public decimal Precio { get; set; }

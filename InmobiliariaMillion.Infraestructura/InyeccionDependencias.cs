@@ -31,7 +31,10 @@ namespace InmobiliariaMillion.Infrastructura
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<IPropiedadServicio, PropiedadServicio>();
-                        
+            services.AddScoped<IPropietarioServicio, PropietarioServicio>();
+            services.AddScoped<IImagenPropiedadServicio, ImagenPropiedadServicio>();
+            services.AddScoped<ITrazabilidadPropiedadServicio, TrazabilidadPropiedadServicio>();
+
             return services;
         }
     }

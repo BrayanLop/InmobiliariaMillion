@@ -125,7 +125,7 @@ namespace InmobiliariaMillion.Controllers
             {
                 if (string.IsNullOrWhiteSpace(id) || propiedadDto == null)
                 {
-                    return BadRequest("El ID y los datos de la propiedad son requeridos.");
+                    return BadRequest("Los datos del propietario son requeridos.");
                 }
 
                 propiedadDto.IdPropiedad = id;

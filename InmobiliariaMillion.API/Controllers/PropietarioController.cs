@@ -103,15 +103,16 @@ namespace InmobiliariaMillion.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<PropietarioOutputDto>> Actualizar([FromBody] PropietarioInputDto propietarioDto)
+        public async Task<ActionResult<PropietarioOutputDto>> Actualizar(string id, [FromBody] PropietarioInputDto propietarioDto)
         {
             try
             {
-                if (propietarioDto == null || string.IsNullOrWhiteSpace(propietarioDto.IdPropietario))
+                if (string.IsNullOrWhiteSpace(id) || propietarioDto == null)
                 {
                     return BadRequest("Los datos del propietario son requeridos.");
                 }
 
+                propietarioDto.IdPropietario = id;
                 var propietarioActualizado = await _propietarioServicio.ActualizarPropietarioAsync(propietarioDto);
 
                 if (propietarioActualizado == null)

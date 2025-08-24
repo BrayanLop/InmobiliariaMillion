@@ -70,7 +70,7 @@ namespace InmobiliariaMillion.Application.Servicios
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentNullException(nameof(id));
 
-            var resultado = await _propietarioRepository.EliminarAsync(id);
+            var resultado = await _propiedadRepository.EliminarAsync(id);
             return resultado;
         }
     }

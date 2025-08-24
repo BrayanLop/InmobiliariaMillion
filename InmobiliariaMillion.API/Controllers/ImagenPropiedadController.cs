@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaMillion.Aplicacion.DTOs.Modelos.ImagenPropiedad;
 using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
+using System.IO;
 
 namespace InmobiliariaMillion.API.Controllers
 {
@@ -161,5 +162,33 @@ namespace InmobiliariaMillion.API.Controllers
                 return StatusCode(500, "Error interno del servidor");
             }
         }
+
+        /// <summary>
+        /// Sube un archivo al servidor
+        /// </summary>
+        //[HttpPost("SubirArchivo")]
+        //[Consumes("multipart/form-data")]
+        //[ProducesResponseType(typeof(string), 201)]
+        //[ProducesResponseType(400)]
+        //public async Task<IActionResult> SubirArchivo([FromForm] IFormFile archivo)
+        //{
+        //    if (archivo == null || archivo.Length == 0)
+        //        return BadRequest("No se ha enviado ningún archivo.");
+
+        //    var carpetaDestino = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+        //    if (!Directory.Exists(carpetaDestino))
+        //        Directory.CreateDirectory(carpetaDestino);
+
+        //    var nombreArchivo = Guid.NewGuid() + Path.GetExtension(archivo.FileName);
+        //    var rutaCompleta = Path.Combine(carpetaDestino, nombreArchivo);
+
+        //    using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+        //    {
+        //        await archivo.CopyToAsync(stream);
+        //    }
+
+        //    var rutaRelativa = Path.Combine("uploads", nombreArchivo);
+        //    return Created("", rutaRelativa);
+        //}
     }
 }

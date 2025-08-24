@@ -5,12 +5,12 @@ using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
 
 namespace InmobiliariaMillion.Application.Servicios
 {
-    public class PropiedadImagenServicio : IImagenPropiedadServicio
+    public class ImagenPropiedadServicio : IImagenPropiedadServicio
     {
         private readonly IPropiedadRepository _propiedadRepository;
         private readonly IImagenPropiedadRepository _imagenRepository;
 
-        public PropiedadImagenServicio(
+        public ImagenPropiedadServicio(
             IPropiedadRepository propiedadRepository,
             IImagenPropiedadRepository imagenRepository,
             IPropietarioRepository propietarioRepository)
