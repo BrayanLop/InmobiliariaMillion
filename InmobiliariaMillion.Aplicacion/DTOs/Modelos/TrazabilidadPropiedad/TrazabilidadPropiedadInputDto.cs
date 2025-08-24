@@ -1,6 +1,6 @@
 namespace InmobiliariaMillion.Aplicacion.DTOs.Modelos.TrazabilidadPropiedad
 {
-    public class TrazabilidadPropiedadDto
+    public class TrazabilidadPropiedadInputDto
     {
         public string IdTrazabilidadPropiedad { get; set; }
         public DateTime FechaVenta { get; set; }

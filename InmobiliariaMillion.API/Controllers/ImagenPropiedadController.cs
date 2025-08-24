@@ -7,11 +7,11 @@ namespace InmobiliariaMillion.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public class PropiedadImagenController : ControllerBase
+    public class ImagenPropiedadController : ControllerBase
     {
-        private readonly IPropiedadImagenServicio _propiedadImagenServicio;
+        private readonly IImagenPropiedadServicio _propiedadImagenServicio;
 
-        public PropiedadImagenController(IPropiedadImagenServicio propiedadImagenServicio)
+        public ImagenPropiedadController(IImagenPropiedadServicio propiedadImagenServicio)
         {
             _propiedadImagenServicio = propiedadImagenServicio;
         }

@@ -2,7 +2,7 @@ using InmobiliariaMillion.Aplicacion.DTOs.Modelos.ImagenPropiedad;
 
 namespace InmobiliariaMillion.Aplicacion.Servicios.Interfaces
 {
-    public interface IPropiedadImagenServicio
+    public interface IImagenPropiedadServicio
     {
         Task<List<ImagenPropiedadOutputDto>> ObtenerPropiedadImagenAsync();
         Task<List<ImagenPropiedadOutputDto>> ObtenerImagenesPorPropiedadAsync(string idPropiedad);

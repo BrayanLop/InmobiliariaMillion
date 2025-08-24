@@ -5,10 +5,10 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
 {
     public static class TrazabilidadPropiedadMapeo
     {
-        public static TrazabilidadPropiedadDto ADto(TrazabilidadPropiedad entidad)
+        public static TrazabilidadPropiedadOutputDto ADto(TrazabilidadPropiedad entidad)
         {
             if (entidad == null) return null;
-            return new TrazabilidadPropiedadDto
+            return new TrazabilidadPropiedadOutputDto
             {
                 IdTrazabilidadPropiedad = entidad.IdTrazabilidadPropiedad,
                 FechaVenta = entidad.FechaVenta,
@@ -19,7 +19,7 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
             };
         }
 
-        public static TrazabilidadPropiedad ADominio(TrazabilidadPropiedadDto dto)
+        public static TrazabilidadPropiedad ADominio(TrazabilidadPropiedadInputDto dto)
         {
             if (dto == null) return null;
             return new TrazabilidadPropiedad
@@ -31,6 +31,18 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
                 Impuesto = dto.Impuesto,
                 IdPropiedad = dto.IdPropiedad
             };
+        }
+
+        public static List<TrazabilidadPropiedadOutputDto> ADtoLista(List<TrazabilidadPropiedad> entidades)
+        {
+            if (entidades == null) return null;
+            return entidades.Select(ADto).ToList();
+        }
+
+        public static List<TrazabilidadPropiedad> ADominioLista(List<TrazabilidadPropiedadInputDto> dtos)
+        {
+            if (dtos == null) return null;
+            return dtos.Select(ADominio).ToList();
         }
     }
 }
