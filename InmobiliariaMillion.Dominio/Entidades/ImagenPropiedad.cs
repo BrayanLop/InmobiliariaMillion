@@ -1,7 +1,10 @@
+using MongoDB.Bson;
+
 namespace InmobiliariaMillion.Dominio.Entidades
 {
     public class ImagenPropiedad
     {
+        public ObjectId _id { get; set; }
         public string IdImagenPropiedad { get; set; }
         public string IdPropiedad { get; set; } // Solo el ID, sin navegación
         public string Archivo { get; set; }
