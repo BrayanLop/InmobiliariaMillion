@@ -23,15 +23,29 @@ namespace InmobiliariaMillion.API.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> Crear([FromBody] TrazabilidadPropiedadInputDto dto)
         {
-            var result = await _trazabilidadPropiedadServicio.CrearTrazabilidadPropiedadAsync(dto);
-            return CreatedAtAction(nameof(ObtenerPorId), new { idTrazabilidadPropiedad = result.IdTrazabilidadPropiedad }, result);
+            try
+            {
+                var result = await _trazabilidadPropiedadServicio.CrearTrazabilidadPropiedadAsync(dto);
+                return CreatedAtAction(nameof(ObtenerPorId), new { idTrazabilidadPropiedad = result.IdTrazabilidadPropiedad }, result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("propiedad/{idPropiedad}")]
         public async Task<ActionResult<List<TrazabilidadPropiedadOutputDto>>> ObtenerPorPropiedad(string idPropiedad)
         {
-            var result = await _trazabilidadPropiedadServicio.ObtenerPorPropiedadAsync(idPropiedad);
-            return Ok(result);
+            try
+            {
+                var result = await _trazabilidadPropiedadServicio.ObtenerPorPropiedadAsync(idPropiedad);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("{id}")]
@@ -40,10 +54,17 @@ namespace InmobiliariaMillion.API.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> ObtenerPorId(string id)
         {
-            var result = await _trazabilidadPropiedadServicio.ObtenerTrazabilidadPropiedadPorIdAsync(id);
-            if (result == null)
-                return NotFound();
-            return Ok(result);
+            try
+            {
+                var result = await _trazabilidadPropiedadServicio.ObtenerTrazabilidadPropiedadPorIdAsync(id);
+                if (result == null)
+                    return NotFound();
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPut("{id}")]
@@ -53,16 +74,23 @@ namespace InmobiliariaMillion.API.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult<TrazabilidadPropiedadOutputDto>> Actualizar(string id, [FromBody] TrazabilidadPropiedadInputDto trazabilidadPropiedadDto)
         {
-            if (string.IsNullOrWhiteSpace(id) || trazabilidadPropiedadDto == null)
+            try
             {
-                return BadRequest("Los datos del registro son requeridos.");
+                if (string.IsNullOrWhiteSpace(id) || trazabilidadPropiedadDto == null)
+                {
+                    return BadRequest("Los datos del registro son requeridos.");
+                }
+
+                trazabilidadPropiedadDto.IdTrazabilidadPropiedad = id;
+                var result = await _trazabilidadPropiedadServicio.ActualizarTrazabilidadPropiedadAsync(trazabilidadPropiedadDto);
+                if (result == null) return NotFound();
+
+                return Ok(result);
             }
-
-            trazabilidadPropiedadDto.IdTrazabilidadPropiedad = id;
-            var result = await _trazabilidadPropiedadServicio.ActualizarTrazabilidadPropiedadAsync(trazabilidadPropiedadDto);
-            if (result == null) return NotFound();
-
-            return Ok(result);
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -72,10 +100,17 @@ namespace InmobiliariaMillion.API.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult> Eliminar(string id)
         {
-            var eliminado = await _trazabilidadPropiedadServicio.EliminarTrazabilidadPropiedadAsync(id);
-            if (!eliminado) return NotFound();
+            try
+            {
+                var eliminado = await _trazabilidadPropiedadServicio.EliminarTrazabilidadPropiedadAsync(id);
+                if (!eliminado) return NotFound();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet("ventas-recientes")]
@@ -83,8 +118,15 @@ namespace InmobiliariaMillion.API.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult<List<TrazabilidadPropiedadOutputDto>>> ObtenerVentasRecientes([FromQuery] DateTime desde)
         {
-            var result = await _trazabilidadPropiedadServicio.ObtenerVentasRecientesAsync(desde);
-            return Ok(result);
+            try
+            {
+                var result = await _trazabilidadPropiedadServicio.ObtenerVentasRecientesAsync(desde);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

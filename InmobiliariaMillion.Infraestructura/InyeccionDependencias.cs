@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using InmobiliariaMillion.Application.Servicios;
 using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
 using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
+using InmobiliariaMillion.Infrastructure.Repositorio;
 
 namespace InmobiliariaMillion.Infrastructura
 {
