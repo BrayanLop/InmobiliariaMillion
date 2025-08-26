@@ -12,6 +12,5 @@ namespace InmobiliariaMillion.Dominio.Entidades
         public decimal Valor { get; set; }
         public decimal Impuesto { get; set; }
         public string IdPropiedad { get; set; } // Solo el ID, sin navegación
-        public decimal ValorTotal { get; set; }
     }
 }

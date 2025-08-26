@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InmobiliariaMillion.Dominio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InmobiliariaMillion.Infraestructura", "InmobiliariaMillion.Infraestructura\InmobiliariaMillion.Infraestructura.csproj", "{DBB2A517-7E15-48C5-84D5-B70FD6BD01B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InmobiliariaMillion.Test", "InmobiliariaMillion.Test\InmobiliariaMillion.Test.csproj", "{45BA1AB8-D222-41EE-81CC-A1AB813BE113}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DBB2A517-7E15-48C5-84D5-B70FD6BD01B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBB2A517-7E15-48C5-84D5-B70FD6BD01B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBB2A517-7E15-48C5-84D5-B70FD6BD01B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45BA1AB8-D222-41EE-81CC-A1AB813BE113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45BA1AB8-D222-41EE-81CC-A1AB813BE113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45BA1AB8-D222-41EE-81CC-A1AB813BE113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45BA1AB8-D222-41EE-81CC-A1AB813BE113}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

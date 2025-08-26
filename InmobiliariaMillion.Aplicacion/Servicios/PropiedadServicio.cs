@@ -10,17 +10,10 @@ namespace InmobiliariaMillion.Application.Servicios
     public class PropiedadServicio : IPropiedadServicio
     {
         private readonly IPropiedadRepository _propiedadRepository;
-        private readonly IImagenPropiedadRepository _imagenRepository;
-        private readonly IPropietarioRepository _propietarioRepository;
 
-        public PropiedadServicio(
-            IPropiedadRepository propiedadRepository,
-            IImagenPropiedadRepository imagenRepository,
-            IPropietarioRepository propietarioRepository)
+        public PropiedadServicio(IPropiedadRepository propiedadRepository)
         {
             _propiedadRepository = propiedadRepository;
-            _imagenRepository = imagenRepository;
-            _propietarioRepository = propietarioRepository;
         }
 
         public async Task<List<PropiedadOutputDto>> ObtenerPropiedadesAsync(FiltrosPropiedadDto filtros)
