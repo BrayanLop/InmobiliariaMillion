@@ -1,12 +1,14 @@
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
-using InmobiliariaMillion.Infrastructura.Configuration;
-using InmobiliariaMillion.Infrastructura.Repositorio;
-using Microsoft.Extensions.Configuration;
+using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
 using InmobiliariaMillion.Application.Servicios;
 using InmobiliariaMillion.Dominio.Interfaces.Repositorios;
-using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
+using InmobiliariaMillion.Infrastructura.Configuration;
+using InmobiliariaMillion.Infrastructura.Interfaces;
+using InmobiliariaMillion.Infrastructura.Repositorio;
+using InmobiliariaMillion.Infrastructura.Servicios;
 using InmobiliariaMillion.Infrastructure.Repositorio;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
 namespace InmobiliariaMillion.Infrastructura
 {
@@ -25,7 +27,8 @@ namespace InmobiliariaMillion.Infrastructura
             services.AddScoped<IPropietarioRepository, PropietarioRepository>();
             services.AddScoped<IImagenPropiedadRepository, ImagenPropiedadRepository>();
             services.AddScoped<ITrazabilidadPropiedadRepository, TrazabilidadPropiedadRepository>();
-            
+            services.AddScoped<IArchivoServicio, ArchivoServicio>();
+
             return services;
         }
 

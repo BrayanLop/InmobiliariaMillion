@@ -1,20 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
+using InmobiliariaMillion.API.Models;
 using InmobiliariaMillion.Aplicacion.DTOs.Modelos.ImagenPropiedad;
 using InmobiliariaMillion.Aplicacion.Servicios.Interfaces;
-using System.IO;
+using InmobiliariaMillion.Infrastructura.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InmobiliariaMillion.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Produces("application/json")]
     public class ImagenPropiedadController : ControllerBase
     {
         private readonly IImagenPropiedadServicio _propiedadImagenServicio;
+        private readonly IArchivoServicio _archivoServicio;
+        private readonly ILogger<ImagenPropiedadController> _logger;
 
-        public ImagenPropiedadController(IImagenPropiedadServicio propiedadImagenServicio)
+        public ImagenPropiedadController(
+            IImagenPropiedadServicio propiedadImagenServicio,
+            IArchivoServicio archivoServicio,
+            ILogger<ImagenPropiedadController> logger)
         {
             _propiedadImagenServicio = propiedadImagenServicio;
+            _archivoServicio = archivoServicio;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,8 +37,9 @@ namespace InmobiliariaMillion.API.Controllers
                 var imagenes = await _propiedadImagenServicio.ObtenerPropiedadImagenAsync();
                 return Ok(imagenes);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al obtener imágenes de propiedades");
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -56,8 +64,9 @@ namespace InmobiliariaMillion.API.Controllers
 
                 return Ok(imagenes);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al obtener imágenes para la propiedad {IdPropiedad}", idPropiedad);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -79,8 +88,9 @@ namespace InmobiliariaMillion.API.Controllers
                 var imagen = await _propiedadImagenServicio.AgregarImagenAPropiedadAsync(dto);
                 return CreatedAtAction(nameof(ObtenerPorId), new { idPropiedad = imagen.IdPropiedad }, imagen);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al crear imagen para propiedad {IdPropiedad}", dto?.IdPropiedad);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -105,8 +115,9 @@ namespace InmobiliariaMillion.API.Controllers
 
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al eliminar imagen {IdImagen}", id);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -131,8 +142,9 @@ namespace InmobiliariaMillion.API.Controllers
 
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al eliminar imágenes de propiedad {IdPropiedad}", id);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -157,38 +169,40 @@ namespace InmobiliariaMillion.API.Controllers
 
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error al {Accion} imagen {IdImagen}", habilitar ? "habilitar" : "deshabilitar", id);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
 
-        /// <summary>
-        /// Sube un archivo al servidor
-        /// </summary>
-        //[HttpPost("SubirArchivo")]
-        //[Consumes("multipart/form-data")]
-        //[ProducesResponseType(typeof(string), 201)]
-        //[ProducesResponseType(400)]
-        //public async Task<IActionResult> SubirArchivo([FromForm] IFormFile archivo)
-        //{
-        //    if (archivo == null || archivo.Length == 0)
-        //        return BadRequest("No se ha enviado ningún archivo.");
+        [HttpPost("Subir")]
+        public async Task<IActionResult> SubirImagen([FromBody] ArchivoRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.ImagenBase64) || string.IsNullOrEmpty(request.NombreArchivo))
+                {
+                    return BadRequest("La imagen o el nombre del archivo no pueden estar vacíos");
+                }
 
-        //    var carpetaDestino = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-        //    if (!Directory.Exists(carpetaDestino))
-        //        Directory.CreateDirectory(carpetaDestino);
+                // Usar el servicio de infraestructura directamente
+                string rutaImagen = await _archivoServicio.GuardarImagenBase64Async(
+                    request.ImagenBase64, 
+                    request.NombreArchivo
+                );
 
-        //    var nombreArchivo = Guid.NewGuid() + Path.GetExtension(archivo.FileName);
-        //    var rutaCompleta = Path.Combine(carpetaDestino, nombreArchivo);
-
-        //    using (var stream = new FileStream(rutaCompleta, FileMode.Create))
-        //    {
-        //        await archivo.CopyToAsync(stream);
-        //    }
-
-        //    var rutaRelativa = Path.Combine("uploads", nombreArchivo);
-        //    return Created("", rutaRelativa);
-        //}
+                return Ok(new { url = rutaImagen });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al subir imagen");
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
     }
 }

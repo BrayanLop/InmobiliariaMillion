@@ -32,16 +32,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "InmobiliariaMillion API V1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = "swagger";
     });
 }
 
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    FileProvider = new PhysicalFileProvider(
-//        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
-//    RequestPath = "/uploads"
-//});
+// Añade esto después de app.MapControllers();
+app.UseStaticFiles(); // Para archivos estáticos en wwwroot
+
+// Configurar la carpeta 'uploads' para servir las imágenes
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads"
+});
 
 // Middlewares de producción
 app.UseHttpsRedirection();
