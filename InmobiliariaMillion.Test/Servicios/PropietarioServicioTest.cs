@@ -41,7 +41,7 @@ namespace InmobiliariaMillion.Test.Servicios
         public void CrearAsync_NombreMuyLargo_LanzaExcepcion()
         {
             // Arrange
-            var nombreLargo = new string('A', 101); // 101 caracteres
+            var nombreLargo = new string('A', 51); // 51 caracteres
             var command = new PropietarioInputDto { Nombre = nombreLargo, Direccion = "Dir", FechaNacimiento = DateTime.Parse("01/01/1980"), Foto = "foto.jpg" };
 
             // Act & Assert
@@ -70,7 +70,7 @@ namespace InmobiliariaMillion.Test.Servicios
             Assert.AreEqual("nuevo_id", result.IdPropietario);
             Assert.AreEqual(command.Nombre, result.Nombre);
             Assert.AreEqual(command.Direccion, result.Direccion);
-            Assert.AreEqual(command.FechaNacimiento.ToString("dd/MM/yyyy"), result.FechaNacimiento);
+            Assert.AreEqual(command.FechaNacimiento, result.FechaNacimiento);
             Assert.AreEqual(command.Foto, result.Foto);
         }
 
@@ -99,21 +99,8 @@ namespace InmobiliariaMillion.Test.Servicios
             Assert.AreEqual("123", result.IdPropietario);
             Assert.AreEqual("Nombre", result.Nombre);
             Assert.AreEqual("Dir", result.Direccion);
-            Assert.AreEqual("01/01/1980", result.FechaNacimiento);
+            Assert.AreEqual("01/01/1980", result.FechaNacimiento.ToString("dd/MM/yyyy"));
             Assert.AreEqual("foto.jpg", result.Foto);
-        }
-
-        [Test]
-        public async Task ObtenerPropietarioPorIdAsync_IdInvalido_RetornaNull()
-        {
-            // Arrange
-            _propietarioRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("123")).ReturnsAsync((Propietario?)null);
-
-            // Act
-            var result = await _propietarioService.ObtenerPropietarioPorIdAsync("123");
-
-            // Assert
-            Assert.IsNull(result);
         }
 
         [Test]
@@ -235,25 +222,26 @@ namespace InmobiliariaMillion.Test.Servicios
             // Arrange
             var command = new PropietarioInputDto
             {
-                IdPropietario = "123",
+                IdPropietario = "68ab501f28543f352fea93ae",
                 Nombre = "NuevoNombre",
                 Direccion = "NuevaDir",
                 FechaNacimiento = DateTime.Parse("02/02/1990"),
                 Foto = "nuevafoto.jpg"
             };
 
-            _propietarioRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("123")).ReturnsAsync(new Propietario
+            _propietarioRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("68ab501f28543f352fea93ae")).ReturnsAsync(new Propietario
             {
-                IdPropietario = "123",
+                IdPropietario = "68ab501f28543f352fea93ae",
                 Nombre = "Nombre",
                 Direccion = "Dir",
                 FechaNacimiento = DateTime.Parse("01/01/1980"),
-                Foto = "foto.jpg"
+                Foto = "foto.jpg",
+                _id = MongoDB.Bson.ObjectId.Parse("68ab501f28543f352fea93af")
             });
 
             _propietarioRepositoryMock.Setup(repo => repo.ActualizarAsync(It.IsAny<Propietario>())).ReturnsAsync(new Propietario
             {
-                IdPropietario = "123",
+                IdPropietario = "68ab501f28543f352fea93ae",
                 Nombre = "NuevoNombre",
                 Direccion = "NuevaDir",
                 FechaNacimiento = DateTime.Parse("02/02/1990"),
@@ -265,10 +253,10 @@ namespace InmobiliariaMillion.Test.Servicios
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("123", result.IdPropietario);
+            Assert.AreEqual("68ab501f28543f352fea93ae", result.IdPropietario);
             Assert.AreEqual("NuevoNombre", result.Nombre);
             Assert.AreEqual("NuevaDir", result.Direccion);
-            Assert.AreEqual("02/02/1990", result.FechaNacimiento);
+            Assert.AreEqual("02/02/1990", result.FechaNacimiento.ToString("dd/MM/yyyy"));
             Assert.AreEqual("nuevafoto.jpg", result.Foto);
         }
 

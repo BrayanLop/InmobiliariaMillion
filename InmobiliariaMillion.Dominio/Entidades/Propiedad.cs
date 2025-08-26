@@ -1,10 +1,30 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Security.Cryptography;
 
 namespace InmobiliariaMillion.Dominio.Entidades
 {
     public class Propiedad
     {
+        public Propiedad()
+        {
+
+        }
+
+        public Propiedad(ObjectId id, string idPropiedad, string nombre, decimal precio, string direccion, string codigoInterno, int anio, string idPropietario)
+        {
+            _id = id;
+            IdPropiedad = idPropiedad ?? ObjectId.GenerateNewId().ToString();
+            Nombre = nombre;
+            Precio = precio;
+            Direccion = direccion;
+            CodigoInterno = codigoInterno;
+            Anio = anio;
+            IdPropietario = idPropietario;
+
+            ActualizarInformacion(nombre, direccion, precio);
+        }
+
         [BsonId]
         [BsonElement("_id")]
         public ObjectId _id { get; set; }
@@ -40,24 +60,7 @@ namespace InmobiliariaMillion.Dominio.Entidades
         public int Anio { get; set; }
         public string IdPropietario { get; set; }
 
-
         //Validaciones
-
-        public void ActualizarPrecio(decimal nuevoPrecio, string razon)
-        {
-            if (nuevoPrecio <= 0)
-                throw new ArgumentException("El nuevo precio debe ser mayor a cero");
-
-            if (string.IsNullOrWhiteSpace(razon) && nuevoPrecio != _precio)
-                throw new ArgumentException("El cambio de precio requiere una razón");
-
-            _precio = nuevoPrecio;
-        }
-
-        public bool EstaDisponible()
-        {
-            return true;
-        }
 
         public decimal CalcularPrecioConImpuestos(decimal tasaImpuesto)
         {
@@ -65,6 +68,21 @@ namespace InmobiliariaMillion.Dominio.Entidades
                 throw new ArgumentException("La tasa de impuesto debe estar entre 0 y 1");
 
             return Precio * (1 + tasaImpuesto);
+        }
+
+        public void ActualizarInformacion(string nuevoNombre, string nuevaDireccion, decimal nuevoPrecio)
+        {
+            if (string.IsNullOrWhiteSpace(nuevoNombre))
+                throw new ArgumentException("El nombre no puede estar vacío");
+            if (nuevoNombre.Length > 50)
+                throw new ArgumentException("El nombre no puede tener mas de 50 caracteres");
+            if (string.IsNullOrWhiteSpace(nuevaDireccion))
+                throw new ArgumentException("La dirección no puede estar vacía");
+            if (nuevoPrecio <= 0)
+                throw new ArgumentException("El nuevo precio debe ser mayor a cero");
+
+            _nombre = nuevoNombre;
+            _precio = nuevoPrecio;
         }
     }
 }

@@ -22,16 +22,15 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
         public static TrazabilidadPropiedad ADominio(TrazabilidadPropiedadInputDto dto)
         {
             if (dto == null) return null;
-            return new TrazabilidadPropiedad
-            {
-                _id = dto._id,
-                IdTrazabilidadPropiedad = dto.IdTrazabilidadPropiedad,
-                FechaVenta = dto.FechaVenta,
-                Nombre = dto.Nombre,
-                Valor = dto.Valor,
-                Impuesto = dto.Impuesto,
-                IdPropiedad = dto.IdPropiedad
-            };
+            return new TrazabilidadPropiedad(
+                dto._id,
+                dto.IdTrazabilidadPropiedad,
+                dto.FechaVenta,
+                dto.Nombre,
+                dto.Valor,
+                dto.Impuesto,
+                dto.IdPropiedad
+            );
         }
 
         public static List<TrazabilidadPropiedadOutputDto> ADtoLista(List<TrazabilidadPropiedad> entidades)

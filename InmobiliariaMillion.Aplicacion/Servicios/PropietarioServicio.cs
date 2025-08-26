@@ -26,7 +26,7 @@ namespace InmobiliariaMillion.Application.Servicios
         {
             var propietario = await _propietarioRepository.ObtenerPorIdAsync(id);
             if (propietario == null)
-                return null;
+                throw new ArgumentException("No se encontro el propietario");
 
             return PropietarioMapeo.ADto(propietario);
         }
@@ -34,7 +34,7 @@ namespace InmobiliariaMillion.Application.Servicios
         public async Task<PropietarioOutputDto> CrearPropietarioAsync(PropietarioInputDto propietarioDto)
         {
             if (propietarioDto == null)
-                throw new ArgumentNullException(nameof(propietarioDto));
+                throw new ArgumentException(nameof(propietarioDto));
 
             var propietarioCreado = await _propietarioRepository.CrearAsync(PropietarioMapeo.ADominio(propietarioDto));
 
@@ -44,7 +44,7 @@ namespace InmobiliariaMillion.Application.Servicios
         public async Task<PropietarioOutputDto> ActualizarPropietarioAsync(PropietarioInputDto propietarioDto)
         {
             var propietario = await _propietarioRepository.ObtenerPorIdAsync(propietarioDto.IdPropietario);
-            if (propietario == null) return null;
+            if (propietario == null) throw new ArgumentException("No se encontro el propietario");
 
             propietarioDto._id = propietario._id;
 

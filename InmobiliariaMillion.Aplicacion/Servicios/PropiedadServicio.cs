@@ -10,10 +10,12 @@ namespace InmobiliariaMillion.Application.Servicios
     public class PropiedadServicio : IPropiedadServicio
     {
         private readonly IPropiedadRepository _propiedadRepository;
+        private readonly IPropietarioServicio _propietarioServicio;
 
-        public PropiedadServicio(IPropiedadRepository propiedadRepository)
+        public PropiedadServicio(IPropiedadRepository propiedadRepository, IPropietarioServicio propietarioServicio)
         {
             _propiedadRepository = propiedadRepository;
+            _propietarioServicio = propietarioServicio;
         }
 
         public async Task<List<PropiedadOutputDto>> ObtenerPropiedadesAsync(FiltrosPropiedadDto filtros)
@@ -28,7 +30,7 @@ namespace InmobiliariaMillion.Application.Servicios
         {
             var propiedad = await _propiedadRepository.ObtenerPorIdAsync(id);
             if (propiedad == null)
-                return null;
+                throw new ArgumentException("No se encontro la propiedad");
 
             return PropiedadMapeo.ADto(propiedad);            
         }
@@ -36,7 +38,11 @@ namespace InmobiliariaMillion.Application.Servicios
         public async Task<PropiedadOutputDto> CrearPropiedadAsync(PropiedadInputDto propiedadDto)
         {
             if (propiedadDto == null)
-                throw new ArgumentNullException(nameof(propiedadDto));
+                throw new ArgumentException(nameof(propiedadDto));
+            
+            var propietario = await _propietarioServicio.ObtenerPropietarioPorIdAsync(propiedadDto.IdPropietario);
+            if (propietario == null)
+                throw new ArgumentException("No existe el propietario asociado a la propiedad");
 
             var propiedadCreada = await _propiedadRepository.CrearAsync(PropiedadMapeo.ADominio(propiedadDto));
 
@@ -49,7 +55,7 @@ namespace InmobiliariaMillion.Application.Servicios
                 throw new ArgumentNullException(nameof(propietarioDto));
 
             var propiedad = await _propiedadRepository.ObtenerPorIdAsync(propietarioDto.IdPropiedad);
-            if (propiedad == null) return null;
+            if (propiedad == null) throw new ArgumentException("No existe la propiedad");
 
             propietarioDto._id = propiedad._id;
 

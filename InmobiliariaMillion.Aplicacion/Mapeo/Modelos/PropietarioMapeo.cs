@@ -21,15 +21,15 @@ namespace InmobiliariaMillion.Aplicacion.Mapeo.Modelos
         public static Propietario ADominio(PropietarioInputDto dto)
         {
             if (dto == null) return null;
-            return new Propietario
-            {
-                _id = dto._id,
-                IdPropietario = dto.IdPropietario,
-                Nombre = dto.Nombre,
-                Direccion = dto.Direccion,
-                Foto = dto.Foto,
-                FechaNacimiento = dto.FechaNacimiento
-            };
+            return new Propietario(
+                dto._id,
+                dto.IdPropietario,
+                dto.Nombre,
+                dto.Direccion,
+                foto: dto.Foto,
+                dto.FechaNacimiento
+             );
+
         }
         public static List<PropietarioOutputDto> ADtoLista(List<Propietario> entidades)
         {

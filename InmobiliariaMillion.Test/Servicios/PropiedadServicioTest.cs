@@ -6,6 +6,7 @@ using InmobiliariaMillion.Aplicacion.DTOs.Modelos.Propiedad;
 using InmobiliariaMillion.Aplicacion.DTOs.Utilidades;
 using InmobiliariaMillion.Dominio.Entidades;
 using NUnit.Framework;
+using InmobiliariaMillion.Aplicacion.DTOs.Modelos.Propietario;
 
 namespace InmobiliariaMillion.Test.Servicios
 {
@@ -14,6 +15,7 @@ namespace InmobiliariaMillion.Test.Servicios
     {
         private Mock<IPropiedadRepository> _propiedadRepositoryMock;
         private Mock<IPropietarioRepository> _propietarioRepositoryMock;
+        private Mock<IPropietarioServicio> _propietarioServicioMock;
         private IPropiedadServicio _propiedadService;
 
         [SetUp]
@@ -21,7 +23,8 @@ namespace InmobiliariaMillion.Test.Servicios
         {
             _propiedadRepositoryMock = new Mock<IPropiedadRepository>();
             _propietarioRepositoryMock = new Mock<IPropietarioRepository>();
-            _propiedadService = new PropiedadServicio(_propiedadRepositoryMock.Object);
+            _propietarioServicioMock = new Mock<IPropietarioServicio>();
+            _propiedadService = new PropiedadServicio(_propiedadRepositoryMock.Object, _propietarioServicioMock.Object);
         }
 
         #region CrearPropiedadAsync Tests
@@ -63,9 +66,16 @@ namespace InmobiliariaMillion.Test.Servicios
         public async Task CrearAsync_CreacionExitosa_RetornaPropiedadDto()
         {
             // Arrange
-            var command = new PropiedadInputDto { Nombre = "Nombre", Direccion = "Dir", Precio = 100, CodigoInterno = "Cod", Anio = 2024, IdPropietario = "123" };
-            _propietarioRepositoryMock.Setup(repo => repo.ExisteAsync(It.IsAny<string>())).ReturnsAsync(true);
-            _propiedadRepositoryMock.Setup(repo => repo.CrearAsync(It.IsAny<Propiedad>())).ReturnsAsync(new Propiedad { IdPropiedad = "nueva_id", Nombre = command.Nombre });
+            var command = new PropiedadInputDto { Nombre = "Nombre", Direccion = "Dir", Precio = 100, CodigoInterno = "Cod", Anio = 2024, IdPropietario = "68ab501f28543f352fea93ae" };
+            
+            // Configuramos el mock del servicio de propietario en lugar del repositorio
+            _propietarioServicioMock
+                .Setup(serv => serv.ObtenerPropietarioPorIdAsync(command.IdPropietario))
+                .ReturnsAsync(new PropietarioOutputDto { IdPropietario = command.IdPropietario, Nombre = "Propietario Test" });
+            
+            _propiedadRepositoryMock
+                .Setup(repo => repo.CrearAsync(It.IsAny<Propiedad>()))
+                .ReturnsAsync(new Propiedad { IdPropiedad = "nueva_id", Nombre = command.Nombre });
 
             // Act
             var result = await _propiedadService.CrearPropiedadAsync(command);
@@ -96,16 +106,13 @@ namespace InmobiliariaMillion.Test.Servicios
         }
 
         [Test]
-        public async Task ObtenerPropiedadPorIdAsync_IdInvalido_RetornaNull()
+        public void ObtenerPropiedadPorIdAsync_IdInvalido_LanzaExcepcion()
         {
             // Arrange
             _propiedadRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("123")).ReturnsAsync((Propiedad)null);
 
-            // Act
-            var result = await _propiedadService.ObtenerPropiedadPorIdAsync("123");
-
-            // Assert
-            Assert.IsNull(result);
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(async () => await _propiedadService.ObtenerPropiedadPorIdAsync("123"));
         }
 
         [Test]
@@ -205,8 +212,8 @@ namespace InmobiliariaMillion.Test.Servicios
         public async Task ActualizarPropiedadAsync_PropiedadNoExiste_LanzaExcepcion()
         {
             // Arrange
-            var command = new PropiedadInputDto { IdPropiedad = "123", Nombre = "Nombre", Direccion = "Dir", Precio = 100, CodigoInterno = "Cod", Anio = 2024, IdPropietario = "123" };
-            _propiedadRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("123")).ReturnsAsync((Propiedad)null);
+            var command = new PropiedadInputDto { IdPropiedad = "68aa48b3f2692dd672b31305", Nombre = "Nombre", Direccion = "Dir", Precio = 100, CodigoInterno = "Cod", Anio = 2024, IdPropietario = "123" };
+            _propiedadRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("68aa48b3f2692dd672b31305")).ReturnsAsync((Propiedad)null);
 
             // Act & Assert
             Assert.ThrowsAsync<ArgumentException>(async () => await _propiedadService.ActualizarPropiedadAsync(command));

@@ -12,8 +12,7 @@ namespace InmobiliariaMillion.Application.Servicios
 
         public ImagenPropiedadServicio(
             IPropiedadRepository propiedadRepository,
-            IImagenPropiedadRepository imagenRepository,
-            IPropietarioRepository propietarioRepository)
+            IImagenPropiedadRepository imagenRepository)
         {
             _propiedadRepository = propiedadRepository;
             _imagenRepository = imagenRepository;
