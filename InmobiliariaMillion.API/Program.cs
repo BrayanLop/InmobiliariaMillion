@@ -1,4 +1,3 @@
-
 using InmobiliariaMillion.Infrastructura;
 using Microsoft.Extensions.FileProviders;
 
@@ -26,6 +25,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -36,19 +36,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Añade esto después de app.MapControllers();
-app.UseStaticFiles(); // Para archivos estáticos en wwwroot
-
-// Configurar la carpeta 'uploads' para servir las imágenes
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
-    RequestPath = "/uploads"
-});
-
-// Middlewares de producción
 app.UseHttpsRedirection();
+
+// Habilita el servicio de archivos estáticos desde la carpeta wwwroot
+app.UseStaticFiles();
+
 app.UseCors("AllowAll");
 app.UseAuthorization();
 

@@ -34,8 +34,8 @@ namespace InmobiliariaMillion.Application.Servicios
 
         public async Task<ImagenPropiedadOutputDto> AgregarImagenAPropiedadAsync(ImagenPropiedadInputDto imagenPropiedadDto)
         {
-            var existePropiedad = await _propiedadRepository.ExisteAsync(imagenPropiedadDto.IdPropiedad);
-            if (!existePropiedad)
+            var existePropiedad = await _propiedadRepository.ObtenerPorIdAsync(imagenPropiedadDto.IdPropiedad);
+            if (existePropiedad == null)
                 throw new ArgumentException("La propiedad no existe.");
 
             var creada = await _imagenRepository.CrearAsync(ImagenPropiedadMapeo.ADominio(imagenPropiedadDto));
@@ -123,6 +123,12 @@ namespace InmobiliariaMillion.Application.Servicios
             {
                 throw new Exception($"Error al procesar la imagen: {ex.Message}", ex);
             }
+        }
+
+        public async Task<ImagenPropiedadOutputDto?> ObtenerImagenPorIdAsync(string idImagenPropiedad)
+        {
+            var imagen = await _imagenRepository.ObtenerPorIdAsync(idImagenPropiedad);
+            return imagen != null ? ImagenPropiedadMapeo.ADto(imagen) : null;
         }
         }
 }

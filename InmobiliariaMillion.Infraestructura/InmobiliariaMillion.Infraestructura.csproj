@@ -18,4 +18,17 @@
     <ProjectReference Include="..\InmobiliariaMillion.Dominio\InmobiliariaMillion.Dominio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InmobiliariaMillion.Dominio\InmobiliariaMillion.Dominio.csproj" />
+  </ItemGroup>
+
 </Project>

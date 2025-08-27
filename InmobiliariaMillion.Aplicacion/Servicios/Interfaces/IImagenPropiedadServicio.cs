@@ -10,5 +10,6 @@ namespace InmobiliariaMillion.Aplicacion.Servicios.Interfaces
         Task<bool> EliminarImagenAsync(string idImagenPropiedad);
         Task<bool> EliminarPropiedadAsync(string idPropiedad); // Elimina todas las imágenes de una propiedad
         Task<bool> HabilitarImagenAsync(string idImagenPropiedad, bool habilitar);
+        Task<ImagenPropiedadOutputDto?> ObtenerImagenPorIdAsync(string idImagenPropiedad);
     }
 }

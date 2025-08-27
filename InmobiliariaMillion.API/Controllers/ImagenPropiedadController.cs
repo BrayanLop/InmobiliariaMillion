@@ -47,26 +47,24 @@ namespace InmobiliariaMillion.API.Controllers
         /// <summary>
         /// Obtiene imágenes por propiedad
         /// </summary>
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(List<ImagenPropiedadOutputDto>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<List<ImagenPropiedadOutputDto>>> ObtenerPorId(string idPropiedad)
+        public async Task<ActionResult<List<ImagenPropiedadOutputDto>>> ObtenerPorId(string id)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(idPropiedad))
+                if (string.IsNullOrWhiteSpace(id))
                     return BadRequest("El ID de la propiedad es requerido.");
 
-                var imagenes = await _propiedadImagenServicio.ObtenerImagenesPorPropiedadAsync(idPropiedad);
-                if (imagenes == null || imagenes.Count == 0)
-                    return NotFound($"No se encontraron imágenes para la propiedad con ID: {idPropiedad}");
+                var imagenes = await _propiedadImagenServicio.ObtenerImagenesPorPropiedadAsync(id);
 
                 return Ok(imagenes);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener imágenes para la propiedad {IdPropiedad}", idPropiedad);
+                _logger.LogError(ex, "Error al obtener imágenes para la propiedad {IdPropiedad}", id);
                 return StatusCode(500, "Error interno del servidor");
             }
         }
@@ -86,7 +84,7 @@ namespace InmobiliariaMillion.API.Controllers
                     return BadRequest("Datos de la imagen o propiedad incompletos.");
 
                 var imagen = await _propiedadImagenServicio.AgregarImagenAPropiedadAsync(dto);
-                return CreatedAtAction(nameof(ObtenerPorId), new { idPropiedad = imagen.IdPropiedad }, imagen);
+                return CreatedAtAction(nameof(ObtenerImagenPorId), new { id = imagen.IdImagenPropiedad }, imagen);
             }
             catch (Exception ex)
             {
@@ -202,6 +200,33 @@ namespace InmobiliariaMillion.API.Controllers
             {
                 _logger.LogError(ex, "Error al subir imagen");
                 return StatusCode(500, $"Error interno: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Obtiene una imagen específica por su ID
+        /// </summary>
+        [HttpGet("ObtenerImagen/{id}")]
+        [ProducesResponseType(typeof(ImagenPropiedadOutputDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<ImagenPropiedadOutputDto>> ObtenerImagenPorId(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return BadRequest("El ID de la imagen es requerido.");
+
+                var imagen = await _propiedadImagenServicio.ObtenerImagenPorIdAsync(id);
+
+                if (imagen == null)
+                    return NotFound($"No se encontró la imagen con ID: {id}");
+
+                return Ok(imagen);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener imagen {IdImagen}", id);
+                return StatusCode(500, "Error interno del servidor");
             }
         }
     }

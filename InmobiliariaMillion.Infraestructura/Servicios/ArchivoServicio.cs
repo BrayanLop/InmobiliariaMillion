@@ -1,4 +1,5 @@
 ﻿using InmobiliariaMillion.Infrastructura.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -6,6 +7,14 @@ namespace InmobiliariaMillion.Infrastructura.Servicios
 {
     public class ArchivoServicio : IArchivoServicio
     {
+        private readonly IWebHostEnvironment _env;
+
+        // Inyectamos IWebHostEnvironment para acceder a las rutas del servidor web
+        public ArchivoServicio(IWebHostEnvironment env)
+        {
+            _env = env ?? throw new ArgumentNullException(nameof(env));
+        }
+
         public async Task<string> GuardarImagenBase64Async(string base64Image, string nombreArchivo)
         {
             if (string.IsNullOrEmpty(base64Image) || string.IsNullOrEmpty(nombreArchivo))
@@ -35,8 +44,19 @@ namespace InmobiliariaMillion.Infrastructura.Servicios
                         if (extension == ".png") formato = ImageFormat.Png;
                         else if (extension == ".gif") formato = ImageFormat.Gif;
 
-                        // Crear directorio si no existe
-                        string uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+                        // Validar que WebRootPath esté configurado
+                        string webRootPath = _env.WebRootPath;
+                        if (string.IsNullOrEmpty(webRootPath))
+                        {
+                            // Fallback: usar el directorio de contenido + wwwroot
+                            webRootPath = Path.Combine(_env.ContentRootPath ?? Directory.GetCurrentDirectory(), "wwwroot");
+                            
+                            // Crear el directorio wwwroot si no existe
+                            if (!Directory.Exists(webRootPath))
+                                Directory.CreateDirectory(webRootPath);
+                        }
+
+                        string uploadFolder = Path.Combine(webRootPath, "uploads");
                         Directory.CreateDirectory(uploadFolder);
 
                         // Generar nombre único para evitar sobreescrituras
@@ -49,6 +69,7 @@ namespace InmobiliariaMillion.Infrastructura.Servicios
                             image.Save(fs, formato);
                         }
 
+                        // La URL relativa que devolveremos es correcta
                         return $"/uploads/{nombreUnico}";
                     }
                 });
