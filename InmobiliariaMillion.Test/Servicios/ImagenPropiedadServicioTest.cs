@@ -54,7 +54,9 @@ namespace InmobiliariaMillion.Test.Servicios
                 Habilitada = true
             };
 
-            _propiedadRepositoryMock.Setup(repo => repo.ExisteAsync("123")).ReturnsAsync(true);
+            _propiedadRepositoryMock.Setup(repo => repo.ObtenerPorIdAsync("123")).ReturnsAsync(
+                new Propiedad { IdPropiedad = "123", Nombre = "Propiedad Test" }
+            );
             _imagenRepositoryMock.Setup(repo => repo.CrearAsync(It.IsAny<ImagenPropiedad>())).ReturnsAsync(
                 new ImagenPropiedad
                 {
